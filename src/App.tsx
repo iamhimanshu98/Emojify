@@ -4,7 +4,7 @@ import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://emojify-3amt.onrender.com";
 
 // Default image from Unsplash (a happy person)
 const DEFAULT_IMAGE = "/public/files/boy.jpg";
