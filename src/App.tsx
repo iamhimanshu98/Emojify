@@ -6,8 +6,7 @@ import { EmotionDisplay } from "./components/EmotionDisplay";
 
 const API_URL = "https://emojify-3amt.onrender.com";
 
-// Default image from Unsplash (a happy person)
-const DEFAULT_IMAGE = "/public/files/boy.jpg";
+const DEFAULT_IMAGE = "/images/boy.jpg";
 
 function App() {
   const [mode, setMode] = useState<"webcam" | "upload">("webcam");
@@ -70,7 +69,7 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-  
+
       const response = await fetch("http://127.0.0.1:5000/predict", {
         method: "POST",
         headers: {
@@ -78,12 +77,12 @@ function App() {
         },
         body: JSON.stringify({ image: imageData }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Failed to process image");
       }
-  
+
       const data = await response.json();
       setEmotion(data.emotion);
       setConfidence(data.confidence);
@@ -96,16 +95,15 @@ function App() {
       setIsLoading(false);
     }
   };
-  
 
   const handleImage = async (imageData: string) => {
     console.log("Captured Image Data:", imageData); // Debug log
-  
+
     try {
       if (!imageData) {
         throw new Error("No image data received");
       }
-  
+
       setImage(imageData);
       await analyzeImage(imageData);
     } catch (err) {

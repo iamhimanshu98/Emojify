@@ -68,6 +68,10 @@ def preprocess_image(image):
         print(f"Error in preprocessing image: {e}")
         return None
 
+@app.route("/")
+def home():
+    return jsonify({"message": "Emotion Detection API is running!"})
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:

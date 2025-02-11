@@ -25,3 +25,4 @@ dist-ssr
 *.sw?
 .bolt
 tf_env 
+test_images
