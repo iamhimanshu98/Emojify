@@ -6,8 +6,10 @@ import base64
 import tensorflow as tf
 import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force TensorFlow to use CPU
+
 # Load Model
-model_path = "model.h5"
+model_path = "models/model.h5"
 if os.path.exists(model_path):
     model = tf.keras.models.load_model(model_path)
 else:
@@ -107,7 +109,8 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-        
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
