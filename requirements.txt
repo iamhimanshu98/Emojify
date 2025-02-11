@@ -10,4 +10,4 @@ pillow
 
 # Miscellaneous dependencies
 setuptools==58.0.4
-scipy==1.7.3
+scipy
