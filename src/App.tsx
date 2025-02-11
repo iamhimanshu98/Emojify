@@ -6,7 +6,7 @@ import { EmotionDisplay } from "./components/EmotionDisplay";
 
 const API_URL = "https://emojify-3amt.onrender.com";
 
-const DEFAULT_IMAGE = "/static/images/boy.jpg";
+const DEFAULT_IMAGE = "/images/boy.jpg";
 
 function App() {
   const [mode, setMode] = useState<"webcam" | "upload">("webcam");
