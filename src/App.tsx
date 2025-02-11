@@ -113,7 +113,6 @@ function App() {
       setError(err instanceof Error ? err.message : "Failed to process image");
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
