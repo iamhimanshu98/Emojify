@@ -1,0 +1,15 @@
+# Flask and CORS for API
+flask
+flask-cors
+Werkzeug
+
+# Machine Learning & Image Processing
+tensorflow==2.12.0
+opencv-python
+numpy==1.23.5
+pillow
+
+# Miscellaneous dependencies
+setuptools==58.0.4
+scipy
+gunicorn

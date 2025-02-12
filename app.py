@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU before importing TensorFlow
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -121,4 +121,4 @@ def predict():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Ensure correct port assignment
-    app.run(host="0.0.0.0", port=port, debug=False)  # Set debug=False for production
+    app.run(host="0.0.0.0", port=port, debug=True)  # Set debug=False for production
