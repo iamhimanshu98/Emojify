@@ -1,25 +1,35 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU before importing TensorFlow
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import cv2
 import base64
 import tensorflow as tf
-import os
+from tensorflow.keras.models import load_model
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force TensorFlow to use CPU
+# Load model
+model_path = "models/emotion_model.h5"
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"Model file not found at {model_path}")
 
-# Load Model
-model_path = "models/model.h5"
-if os.path.exists(model_path):
-    model = tf.keras.models.load_model(model_path)
-else:
-    raise FileNotFoundError(f"Model file not found at {model_path}. Ensure the correct path.")
+model = load_model(model_path, compile=False)
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])  # Ensure proper compilation
 
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
 # Emotion Labels
 EMOTIONS = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+
+# Ensure face detector exists
+face_cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+if not os.path.exists(face_cascade_path):
+    raise FileNotFoundError(f"Haarcascade file not found at {face_cascade_path}")
+
+face_cascade = cv2.CascadeClassifier(face_cascade_path)
 
 def decode_base64_image(base64_string):
     """ Convert base64 string to an OpenCV image """
@@ -42,9 +52,6 @@ def preprocess_image(image):
     try:
         # Convert to grayscale if not already
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # Load Haar cascade for face detection
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
@@ -110,7 +117,6 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Ensure correct port assignment
+    app.run(host="0.0.0.0", port=port, debug=False)  # Set debug=False for production
