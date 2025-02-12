@@ -9,6 +9,8 @@ import base64
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
+print(f"Running TensorFlow version: {tf.__version__}")
+
 # Load model
 model_path = "models/emotion_model.h5"
 if not os.path.exists(model_path):
