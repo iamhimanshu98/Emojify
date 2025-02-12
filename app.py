@@ -12,7 +12,7 @@ from tensorflow.keras.models import load_model
 print(f"Running TensorFlow version: {tf.__version__}")
 
 # Load model
-model_path = "models/emotion_model.h5"
+model_path = "models/model.h5"
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file not found at {model_path}")
 
