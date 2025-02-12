@@ -4,7 +4,7 @@ flask-cors
 Werkzeug
 
 # Machine Learning & Image Processing
-tensorflow
+tensorflow==2.5.0
 opencv-python
 numpy
 pillow
