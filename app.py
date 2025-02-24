@@ -11,7 +11,6 @@ from tensorflow.keras.models import load_model
 
 print(f"Running TensorFlow version: {tf.__version__}")
 
-# Load model
 model_path = "models/model.h5"
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file not found at {model_path}")
@@ -19,11 +18,9 @@ if not os.path.exists(model_path):
 model = load_model(model_path, compile=False)
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])  # Ensure proper compilation
 
-# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
-# Emotion Labels
 EMOTIONS = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
 
 # Ensure face detector exists
