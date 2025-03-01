@@ -104,7 +104,6 @@ function App() {
       if (!imageData) {
         throw new Error("No image data received");
       }
-
       setImage(imageData);
       await analyzeImage(imageData);
     } catch (err) {
