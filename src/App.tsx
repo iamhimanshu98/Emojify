@@ -1,230 +1,3 @@
-/*import { useState, useEffect } from "react";
-import { Camera, Upload, AlertCircle, Smile } from "lucide-react";
-import { WebcamCapture } from "./components/WebcamCapture";
-import { FileUpload } from "./components/FileUpload";
-import { EmotionDisplay } from "./components/EmotionDisplay";
-
-const API_URL = "https://emojify-3amt.onrender.com";
-
-const DEFAULT_IMAGE = "/images/boy.jpg";
-
-function App() {
-  const [mode, setMode] = useState<"webcam" | "upload">("webcam");
-  const [image, setImage] = useState<string | null>(null);
-  const [emotion, setEmotion] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const loadDefaultImage = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-
-        img.onerror = () => {
-          setError("Failed to load default image");
-          setIsLoading(false);
-        };
-
-        img.onload = async () => {
-          try {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext("2d");
-
-            if (!ctx) {
-              throw new Error("Failed to get canvas context");
-            }
-
-            ctx.drawImage(img, 0, 0);
-            const base64Image = canvas.toDataURL("image/jpeg");
-
-            setImage(base64Image);
-            await analyzeImage(base64Image);
-          } catch (err) {
-            console.error("Error processing default image:", err);
-            setError("Failed to process default image");
-          } finally {
-            setIsLoading(false);
-          }
-        };
-
-        img.src = DEFAULT_IMAGE;
-      } catch (err) {
-        console.error("Error in loadDefaultImage:", err);
-        setError("Failed to initialize default image");
-        setIsLoading(false);
-      }
-    };
-
-    loadDefaultImage();
-  }, []);
-
-  const analyzeImage = async (imageData: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch(`http://127.0.0.1:5000/predict`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ image: imageData }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to process image");
-      }
-
-      const data = await response.json();
-      setEmotion(data.emotion);
-      setConfidence(data.confidence);
-    } catch (err) {
-      console.error("Error analyzing image:", err);
-      setError(err instanceof Error ? err.message : "Failed to detect emotion");
-      setEmotion(null);
-      setConfidence(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleImage = async (imageData: string) => {
-    console.log("Captured Image Data:", imageData); // Debug log
-
-    try {
-      if (!imageData) {
-        throw new Error("No image data received");
-      }
-      setImage(imageData);
-      await analyzeImage(imageData);
-    } catch (err) {
-      console.error("Error handling image:", err);
-      setError(err instanceof Error ? err.message : "Failed to process image");
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <header className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Smile className="w-12 h-12 text-indigo-500" />
-            <h1 className="text-5xl pb-2 font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">
-              Emojify
-            </h1>
-          </div>
-          <p className="text-xl text-gray-400 mb-4">
-            Transform your expressions into emotions with AI
-          </p>
-          <div className="flex flex-col items-center gap-2 text-gray-400 max-w-2xl mx-auto">
-            <p className="text-sm">
-              Experience real-time emotion detection powered by advanced AI.
-              Whether you're using your webcam or uploading a photo, Emojify
-              instantly analyzes facial expressions and matches them with the
-              perfect emoji.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-indigo-400 mb-2">
-                  Real-time Detection
-                </h3>
-                <p className="text-xs">
-                  Instant emotion analysis through your webcam
-                </p>
-              </div>
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-purple-400 mb-2">
-                  Photo Upload
-                </h3>
-                <p className="text-xs">Upload and analyze photos with ease</p>
-              </div>
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-pink-400 mb-2">AI Powered</h3>
-                <p className="text-xs">
-                  Advanced machine learning for accurate results
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div className="flex justify-center gap-4 mb-8">
-          <button
-            onClick={() => setMode("webcam")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
-              mode === "webcam"
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            <Camera size={20} />
-            Webcam
-          </button>
-          <button
-            onClick={() => setMode("upload")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
-              mode === "upload"
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            <Upload size={20} />
-            Upload Photo
-          </button>
-        </div>
-
-        <div className="max-w-8xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              {mode === "webcam" ? (
-                <WebcamCapture onCapture={handleImage} />
-              ) : (
-                <FileUpload onUpload={handleImage} />
-              )}
-            </div>
-
-            <div className="flex flex-col justify-center">
-              {error ? (
-                <div className="flex items-center gap-2 text-red-400 bg-red-900/20 p-4 rounded-lg">
-                  <AlertCircle size={20} />
-                  {error}
-                </div>
-              ) : (
-                <>
-                  {image && (
-                    <img
-                      src={image}
-                      alt="Captured"
-                      className="w-full rounded-lg shadow-lg mb-4"
-                    />
-                  )}
-                  <EmotionDisplay emotion={emotion} confidence={confidence} />
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <footer className="mt-16 text-center text-gray-400 text-sm">
-          <p>© 2025 Emojify. All rights reserved.</p>
-          <p className="mt-2">Powered by advanced Emotion Detection Model</p>
-        </footer>
-      </div>
-    </div>
-  );
-}
-export default App;
-*/
-/*Okay so listen I have a project named Emojify that detects human face and tells emotion using ML model. Now I want to add one more feature to it that It suggest some activities, games, tasks etc. that are based on the mood. at a time there are only three activities are visible which are displayed with large font title and description. there is an option to accept and each activity and perform it for a specific time period like 10min 20min 30min like this. if user does not like suggestions he can shuffle the suggestions. and the displayed suggestions are shuffled with new ones. after this I am thinking that I can give an ai response bot that can also suggest some extra activities on that specific mood if user dont like those given suggestions*/
-
 import { useState, useEffect } from "react";
 import {
   Camera,
@@ -235,6 +8,9 @@ import {
   Clock,
   Check,
   MessageSquare,
+  Music,
+  Lightbulb,
+  Dices,
 } from "lucide-react";
 import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
@@ -445,8 +221,32 @@ const activitySuggestions = {
   ],
 };
 
-// Time options for activities
-const timeOptions = [5, 10, 15, 20, 30, 45, 60];
+// Emotion-based background colors (subtle tints)
+const emotionBackgrounds = {
+  happy: "bg-yellow-900/20 border-yellow-600/30",
+  sad: "bg-blue-900/20 border-blue-600/30",
+  angry: "bg-red-900/20 border-red-600/30",
+  surprised: "bg-purple-900/20 border-purple-600/30",
+  neutral: "bg-gray-800 border-gray-700",
+  fear: "bg-indigo-900/20 border-indigo-600/30",
+  disgust: "bg-green-900/20 border-green-600/30",
+};
+
+// Chat prompt suggestions
+const chatPrompts = [
+  {
+    text: "Tell me interesting facts about my current mood",
+    icon: <Lightbulb size={16} />,
+  },
+  {
+    text: "Suggest music that matches how I'm feeling",
+    icon: <Music size={16} />,
+  },
+  {
+    text: "What activities would help improve my mood?",
+    icon: <Clock size={16} />,
+  },
+];
 
 // Map API emotion labels to our activity categories
 const mapEmotionToCategory = (emotion: string | null): string => {
@@ -465,6 +265,14 @@ const mapEmotionToCategory = (emotion: string | null): string => {
   return emotionMap[emotion.toLowerCase()] || "neutral";
 };
 
+// Activity type with selection and time properties
+interface Activity {
+  title: string;
+  description: string;
+  selected?: boolean;
+  time?: number;
+}
+
 function App() {
   const [mode, setMode] = useState<"webcam" | "upload">("webcam");
   const [image, setImage] = useState<string | null>(null);
@@ -474,11 +282,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Activity suggestion states
-  const [displayedActivities, setDisplayedActivities] = useState<Array<any>>(
+  const [displayedActivities, setDisplayedActivities] = useState<Activity[]>(
     []
   );
-  const [selectedActivity, setSelectedActivity] = useState<any>(null);
-  const [selectedTime, setSelectedTime] = useState<number | null>(null);
+  const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
+  const [activityQueue, setActivityQueue] = useState<Activity[]>([]);
+  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
   const [chatMessages, setChatMessages] = useState<
     Array<{ text: string; sender: string }>
@@ -545,7 +354,16 @@ function App() {
         emotionCategory as keyof typeof activitySuggestions
       ] || activitySuggestions.neutral;
     const shuffled = [...activities].sort(() => 0.5 - Math.random());
-    setDisplayedActivities(shuffled.slice(0, 3));
+
+    // Reset any selections when shuffling
+    setSelectedActivities([]);
+    setDisplayedActivities(
+      shuffled.slice(0, 3).map((activity) => ({
+        ...activity,
+        selected: false,
+        time: 5,
+      }))
+    );
   };
 
   // Update activities when emotion changes
@@ -578,8 +396,9 @@ function App() {
       setConfidence(data.confidence);
 
       // Reset activity states when new emotion is detected
-      setSelectedActivity(null);
-      setSelectedTime(null);
+      setSelectedActivities([]);
+      setActivityQueue([]);
+      setCurrentActivity(null);
       setActivityInProgress(false);
 
       // Show activities section after emotion detection
@@ -607,29 +426,92 @@ function App() {
     }
   };
 
-  // Select an activity
-  const selectActivity = (activity: any) => {
-    setSelectedActivity(activity);
-    setSelectedTime(null);
+  // Toggle activity selection
+  const toggleActivitySelection = (index: number) => {
+    const updatedActivities = [...displayedActivities];
+    updatedActivities[index].selected = !updatedActivities[index].selected;
+    setDisplayedActivities(updatedActivities);
+
+    // Update selected activities list
+    if (updatedActivities[index].selected) {
+      setSelectedActivities((prev) => [...prev, updatedActivities[index]]);
+    } else {
+      setSelectedActivities((prev) =>
+        prev.filter((a) => a.title !== updatedActivities[index].title)
+      );
+    }
   };
 
-  // Start the selected activity with the chosen time
-  const startActivity = () => {
-    if (selectedActivity && selectedTime) {
+  // Update activity time
+  const updateActivityTime = (index: number, newTime: number) => {
+    const updatedActivities = [...displayedActivities];
+    updatedActivities[index].time = Math.max(2, Math.min(30, newTime));
+    setDisplayedActivities(updatedActivities);
+
+    // Also update in selected activities if it's there
+    setSelectedActivities((prev) =>
+      prev.map((activity) =>
+        activity.title === updatedActivities[index].title
+          ? { ...activity, time: updatedActivities[index].time }
+          : activity
+      )
+    );
+  };
+
+  // Start the selected activities
+  const startActivities = () => {
+    if (selectedActivities.length > 0) {
+      // Create a queue of activities to do in sequence
+      setActivityQueue([...selectedActivities]);
       setActivityInProgress(true);
-      setTimeRemaining(selectedTime * 60); // Convert minutes to seconds
+
+      // Start the first activity
+      const firstActivity = selectedActivities[0];
+      setCurrentActivity(firstActivity);
+      setTimeRemaining((firstActivity.time || 5) * 60); // Convert minutes to seconds
 
       // Start countdown timer
       const timer = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
-            setActivityInProgress(false);
+            moveToNextActivity();
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
+    }
+  };
+
+  // Move to the next activity in the queue
+  const moveToNextActivity = () => {
+    // Remove the current activity from the queue
+    const updatedQueue = [...activityQueue];
+    updatedQueue.shift();
+    setActivityQueue(updatedQueue);
+
+    if (updatedQueue.length > 0) {
+      // Start the next activity
+      const nextActivity = updatedQueue[0];
+      setCurrentActivity(nextActivity);
+      setTimeRemaining((nextActivity.time || 5) * 60);
+
+      // Start countdown timer for next activity
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            moveToNextActivity();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      // All activities completed
+      setActivityInProgress(false);
+      setCurrentActivity(null);
     }
   };
 
@@ -696,9 +578,23 @@ function App() {
     setUserInput("");
   };
 
+  // Handle clicking on a chat prompt suggestion
+  const handlePromptClick = (promptText: string) => {
+    setUserInput(promptText);
+  };
+
+  // Get emotion-based background class
+  const getEmotionBackground = () => {
+    const emotionCategory = mapEmotionToCategory(emotion);
+    return (
+      emotionBackgrounds[emotionCategory as keyof typeof emotionBackgrounds] ||
+      emotionBackgrounds.neutral
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-8 md:px-12 lg:px-16 py-8">
         <header className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Smile className="w-12 h-12 text-indigo-500" />
@@ -776,36 +672,52 @@ function App() {
           </button>
         </div>
 
-        <div className="max-w-8xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              {mode === "webcam" ? (
-                <WebcamCapture onCapture={handleImage} />
-              ) : (
-                <FileUpload onUpload={handleImage} />
-              )}
-            </div>
-
-            <div className="flex flex-col justify-center">
-              {error ? (
-                <div className="flex items-center gap-2 text-red-400 bg-red-900/20 p-4 rounded-lg">
-                  <AlertCircle size={20} />
-                  {error}
-                </div>
-              ) : (
-                <>
-                  {image && (
-                    <img
-                      src={image}
-                      alt="Captured"
-                      className="w-full rounded-lg shadow-lg mb-4"
-                    />
-                  )}
-                  <EmotionDisplay emotion={emotion} confidence={confidence} />
-                </>
-              )}
+        {/* Main content area with fixed heights */}
+        <div className="max-w-full mx-auto">
+          {/* Webcam/Upload Section - Full width */}
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="w-full">
+                {mode === "webcam" ? (
+                  <WebcamCapture onCapture={handleImage} />
+                ) : (
+                  <FileUpload onUpload={handleImage} />
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Results Section */}
+          {(image || error) && (
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Image with fixed height */}
+                {image && (
+                  <div className="md:w-1/2">
+                    <div className="h-64 md:h-80 overflow-hidden rounded-lg">
+                      <img
+                        src={image}
+                        alt="Captured"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Emotion Display */}
+                <div className="md:w-1/2 flex flex-col justify-center">
+                  {error ? (
+                    <div className="flex items-center gap-2 text-red-400 bg-red-900/20 p-4 rounded-lg">
+                      <AlertCircle size={20} />
+                      {error}
+                    </div>
+                  ) : (
+                    <EmotionDisplay emotion={emotion} confidence={confidence} />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Activity Suggestions Section */}
@@ -816,17 +728,34 @@ function App() {
             </h2>
 
             {/* Activity in Progress */}
-            {activityInProgress && (
+            {activityInProgress && currentActivity && (
               <div className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-l-4 border-green-500 rounded-lg shadow-lg p-6 mb-8">
                 <h2 className="text-2xl font-semibold text-green-400 mb-2">
                   Activity in Progress
                 </h2>
                 <p className="text-xl font-medium mb-2 text-white">
-                  {selectedActivity.title}
+                  {currentActivity.title}
                 </p>
                 <p className="text-gray-300 mb-4">
-                  {selectedActivity.description}
+                  {currentActivity.description}
                 </p>
+
+                {activityQueue.length > 1 && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-400 mb-2">Up next:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {activityQueue.slice(1).map((activity, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-gray-800 px-3 py-1 rounded-full text-xs"
+                        >
+                          {activity.title} ({activity.time}min)
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Clock className="text-green-400 mr-2" />
@@ -835,100 +764,123 @@ function App() {
                     </span>
                   </div>
                   <button
-                    onClick={() => setActivityInProgress(false)}
+                    onClick={moveToNextActivity}
                     className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300"
                   >
-                    End Early
+                    Skip Activity
                   </button>
                 </div>
               </div>
             )}
 
             {/* Activity Selection Section */}
-            {!activityInProgress && !selectedActivity && (
-              <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            {!activityInProgress && (
+              <div
+                className={`rounded-lg shadow-lg p-6 mb-8 border ${getEmotionBackground()}`}
+              >
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-semibold text-white">
                     Suggested Activities for Your Mood
                   </h2>
-                  <button
-                    onClick={shuffleActivities}
-                    className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded transition duration-300"
-                  >
-                    <Shuffle className="mr-2 h-5 w-5" />
-                    Shuffle
-                  </button>
+                  <p className="text-gray-400">
+                    Select one or more activities to start
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   {displayedActivities.map((activity, index) => (
                     <div
                       key={index}
-                      className="bg-gray-700 hover:bg-gray-600 rounded-lg p-5 cursor-pointer transition duration-300 border border-gray-600"
-                      onClick={() => selectActivity(activity)}
+                      className={`rounded-lg p-5 cursor-pointer transition duration-300 border ${
+                        activity.selected
+                          ? "bg-indigo-900/40 border-indigo-500"
+                          : "bg-gray-800/80 border-gray-700 hover:bg-gray-700/80"
+                      }`}
+                      onClick={() => toggleActivitySelection(index)}
                     >
-                      <h3 className="text-xl font-bold text-indigo-300 mb-3">
-                        {activity.title}
-                      </h3>
-                      <p className="text-gray-300">{activity.description}</p>
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-xl font-bold text-indigo-300">
+                          {activity.title}
+                        </h3>
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            activity.selected
+                              ? "border-indigo-400 bg-indigo-600"
+                              : "border-gray-500"
+                          }`}
+                        >
+                          {activity.selected && (
+                            <Check size={14} className="text-white" />
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-gray-300 mb-4">
+                        {activity.description}
+                      </p>
+
+                      {activity.selected && (
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-400 mb-2">
+                            Time (minutes):
+                          </p>
+                          <div className="flex items-center">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateActivityTime(
+                                  index,
+                                  (activity.time || 5) - 1
+                                );
+                              }}
+                              className="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded-l flex items-center justify-center"
+                            >
+                              -
+                            </button>
+                            <div className="bg-gray-800 w-12 h-8 flex items-center justify-center border-t border-b border-gray-700">
+                              {activity.time || 5}
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateActivityTime(
+                                  index,
+                                  (activity.time || 5) + 1
+                                );
+                              }}
+                              className="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded-r flex items-center justify-center"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
 
-            {/* Activity Details and Time Selection */}
-            {!activityInProgress && selectedActivity && (
-              <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-semibold text-white mb-2">
-                    Selected Activity
-                  </h2>
-                  <h3 className="text-xl font-bold text-indigo-300 mb-3">
-                    {selectedActivity.title}
-                  </h3>
-                  <p className="text-gray-300 mb-6">
-                    {selectedActivity.description}
-                  </p>
-
-                  <h4 className="text-lg font-medium text-white mb-3">
-                    How long would you like to do this activity?
-                  </h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {timeOptions.map((time) => (
-                      <button
-                        key={time}
-                        onClick={() => setSelectedTime(time)}
-                        className={`py-2 px-4 rounded-full font-medium transition duration-300 ${
-                          selectedTime === time
-                            ? "bg-indigo-600 text-white"
-                            : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                        }`}
-                      >
-                        {time} min
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-between">
+                <div className="flex flex-col sm:flex-row justify-between gap-4">
                   <button
-                    onClick={() => setSelectedActivity(null)}
-                    className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded transition duration-300"
+                    onClick={shuffleActivities}
+                    className="flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded transition duration-300 sm:w-auto w-full"
                   >
-                    Back
+                    <Dices className="mr-2 h-5 w-5" />
+                    Shuffle Activities
                   </button>
                   <button
-                    onClick={startActivity}
-                    disabled={!selectedTime}
-                    className={`flex items-center font-medium py-2 px-6 rounded transition duration-300 ${
-                      selectedTime
+                    onClick={startActivities}
+                    disabled={selectedActivities.length === 0}
+                    className={`flex items-center justify-center font-medium py-3 px-6 rounded transition duration-300 sm:w-auto w-full ${
+                      selectedActivities.length > 0
                         ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-gray-600 text-gray-400 cursor-not-allowed"
                     }`}
                   >
                     <Check className="mr-2 h-5 w-5" />
-                    Start Activity
+                    Start{" "}
+                    {selectedActivities.length > 0
+                      ? `${selectedActivities.length} `
+                      : ""}
+                    Activities
                   </button>
                 </div>
               </div>
@@ -953,32 +905,70 @@ function App() {
                 <div className="border border-gray-700 rounded-lg">
                   <div className="h-64 overflow-y-auto p-4 bg-gray-900">
                     {chatMessages.length === 0 ? (
-                      <div className="text-center text-gray-500 mt-10">
+                      <div className="text-center text-gray-500 mt-6 mb-8">
                         <MessageSquare className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                        <p>
+                        <p className="mb-6">
                           Ask for personalized activity suggestions based on
                           your mood!
                         </p>
+
+                        {/* Prompt suggestions */}
+                        <div className="flex flex-col gap-2">
+                          {chatPrompts.map((prompt, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handlePromptClick(prompt.text)}
+                              className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-left text-gray-300 p-3 rounded-lg transition-colors"
+                            >
+                              <span className="text-indigo-400">
+                                {prompt.icon}
+                              </span>
+                              {prompt.text}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     ) : (
-                      chatMessages.map((msg, index) => (
-                        <div
-                          key={index}
-                          className={`mb-3 ${
-                            msg.sender === "user" ? "text-right" : "text-left"
-                          }`}
-                        >
-                          <div
-                            className={`inline-block px-4 py-2 rounded-lg ${
-                              msg.sender === "user"
-                                ? "bg-indigo-600 text-white rounded-br-none"
-                                : "bg-gray-700 text-gray-200 rounded-bl-none"
-                            }`}
-                          >
-                            {msg.text}
-                          </div>
+                      <>
+                        <div className="space-y-4 mb-4">
+                          {chatMessages.map((msg, index) => (
+                            <div
+                              key={index}
+                              className={`flex ${
+                                msg.sender === "user"
+                                  ? "justify-end"
+                                  : "justify-start"
+                              }`}
+                            >
+                              <div
+                                className={`max-w-[80%] px-4 py-2 rounded-lg ${
+                                  msg.sender === "user"
+                                    ? "bg-indigo-600 text-white rounded-br-none"
+                                    : "bg-gray-700 text-gray-200 rounded-bl-none"
+                                }`}
+                              >
+                                {msg.text}
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))
+
+                        {/* Prompt suggestions after messages */}
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {chatPrompts.map((prompt, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handlePromptClick(prompt.text)}
+                              className="flex items-center gap-1 bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-xs transition-colors"
+                            >
+                              <span className="text-indigo-400">
+                                {prompt.icon}
+                              </span>
+                              {prompt.text}
+                            </button>
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
                   <form
@@ -1015,3 +1005,10 @@ function App() {
 }
 
 export default App;
+
+/*
+
+dont add the scale effect on the hero section items its not good keep it simple.
+also when I click on get started it should scroll to that section smoothly.
+
+*/
