@@ -1,112 +1,115 @@
-import React, { useCallback, useState } from 'react';
-import { Upload } from 'lucide-react';
+import { useState, useCallback } from "react";
+import { Upload, File, X } from "lucide-react";
 
 interface FileUploadProps {
-  onUpload: (image: string) => void;
+  onUpload: (imageData: string) => void;
 }
 
 export function FileUpload({ onUpload }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
-    }
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.type.match("image.*")) {
+        alert("Please select an image file");
+        return;
+      }
 
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File size should be less than 5MB');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      // Create an image element to check dimensions
-      const img = new Image();
-      img.onload = () => {
-        // Create a canvas to resize if necessary
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        // Max dimensions
-        const MAX_WIDTH = 1280;
-        const MAX_HEIGHT = 720;
-
-        // Scale down if image is too large
-        if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-          if (width / height > MAX_WIDTH / MAX_HEIGHT) {
-            height = height * (MAX_WIDTH / width);
-            width = MAX_WIDTH;
-          } else {
-            width = width * (MAX_HEIGHT / height);
-            height = MAX_HEIGHT;
-          }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          setPreview(result);
+          onUpload(result);
         }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-
-        const resizedImage = canvas.toDataURL('image/jpeg', 0.9);
-        onUpload(resizedImage);
       };
-      img.src = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-  }, [onUpload]);
+      reader.readAsDataURL(file);
+    },
+    [onUpload]
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    },
+    [handleFile]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleDragLeave = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFile(e.target.files[0]);
+      }
+    },
+    [handleFile]
+  );
+
+  const clearPreview = useCallback(() => {
+    setPreview(null);
+  }, []);
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="flex flex-col items-center">
       <div
-        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+        className={`relative w-full h-[500px] border-2 border-dashed rounded-lg flex flex-col items-center justify-center p-8 transition-colors ${
           isDragging
-            ? 'border-indigo-500 bg-indigo-50/10'
-            : 'border-gray-500 hover:border-indigo-500'
+            ? "border-indigo-500 bg-indigo-900/20"
+            : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
         }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <Upload className={`w-8 h-8 mb-2 ${isDragging ? 'text-indigo-500' : 'text-gray-400'}`} />
-            <p className="mb-2 text-sm text-gray-400">
-              <span className="font-semibold">Click to upload</span> or drag and drop
-            </p>
-            <p className="text-xs text-gray-400">PNG, JPG or JPEG (max. 5MB)</p>
+        {preview ? (
+          <div className="relative w-full h-full">
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full h-full object-contain"
+            />
+            <button
+              onClick={clearPreview}
+              className="absolute top-3 right-3 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+            >
+              <X size={24} />
+            </button>
           </div>
-          <input
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </label>
+        ) : (
+          <>
+            <Upload className="w-24 h-24 text-gray-500 mb-6" />
+            <p className="text-2xl font-medium text-gray-300 mb-3">
+              Drag & Drop your image here
+            </p>
+            <p className="text-lg text-gray-500 mb-8">
+              Supports: JPG, PNG, JPEG
+            </p>
+            <label className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium py-4 px-8 rounded-lg transition-colors cursor-pointer flex items-center gap-3">
+              <File size={24} />
+              Browse Files
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileInput}
+              />
+            </label>
+          </>
+        )}
       </div>
     </div>
   );

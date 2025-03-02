@@ -4,7 +4,6 @@ import {
   Upload,
   AlertCircle,
   Smile,
-  Shuffle,
   Clock,
   Check,
   MessageSquare,
@@ -16,7 +15,7 @@ import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
 
-const API_URL = "https://emojify-3amt.onrender.com";
+// const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
 
 // Activity suggestions based on emotions
@@ -610,7 +609,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section - Full Height */}
-      <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-indigo-900/30 to-gray-900 px-8 py-16 overflow-hidden relative">
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-indigo-900/30 to-gray-900 px-8 py-10 overflow-hidden relative">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -inset-[10px] opacity-30">
             {/* Animated background elements */}
@@ -627,18 +626,17 @@ function App() {
               Emojify
             </h1>
           </div>
-          <p className="text-3xl text-gray-300 mb-8 font-light">
+          <p className="text-4xl text-gray-300 mb-8 font-light">
             Transform your expressions into emotions with AI
           </p>
-          <div className="flex flex-col items-center gap-6 text-gray-300 max-w-3xl mx-auto">
-            <p className="text-xl">
-              Experience real-time emotion detection powered by advanced AI.
-              Whether you're using your webcam or uploading a photo, Emojify
-              instantly analyzes facial expressions and matches them with the
-              perfect emoji and suggests activities to match your mood.
+          <div className="flex flex-col items-center gap-6 text-gray-300  mx-auto">
+            <p className="text-xl text-justify">
+              Experience AI-powered real-time emotion detection. Use your
+              webcam, and Emojify will instantly analyze your expressions, match
+              them with the perfect emoji, and suggest mood-boosting activities!
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 w-full">
-              <div className="bg-gray-800/80 p-6 rounded-xl transform transition-all duration-300 hover:scale-105 hover:bg-gray-800">
+              <div className="bg-gray-800/80 p-6 rounded-xl">
                 <h3 className="font-semibold text-indigo-400 text-xl mb-3">
                   Real-time Detection
                 </h3>
@@ -646,13 +644,13 @@ function App() {
                   Instant emotion analysis through your webcam
                 </p>
               </div>
-              <div className="bg-gray-800/80 p-6 rounded-xl transform transition-all duration-300 hover:scale-105 hover:bg-gray-800">
+              <div className="bg-gray-800/80 p-6 rounded-xl">
                 <h3 className="font-semibold text-purple-400 text-xl mb-3">
                   Photo Upload
                 </h3>
                 <p className="text-base">Upload and analyze photos with ease</p>
               </div>
-              <div className="bg-gray-800/80 p-6 rounded-xl transform transition-all duration-300 hover:scale-105 hover:bg-gray-800">
+              <div className="bg-gray-800/80 p-6 rounded-xl">
                 <h3 className="font-semibold text-pink-400 text-xl mb-3">
                   Mood Activities
                 </h3>
@@ -660,7 +658,7 @@ function App() {
                   Get personalized activity suggestions based on your mood
                 </p>
               </div>
-              <div className="bg-gray-800/80 p-6 rounded-xl transform transition-all duration-300 hover:scale-105 hover:bg-gray-800">
+              <div className="bg-gray-800/80 p-6 rounded-xl">
                 <h3 className="font-semibold text-green-400 text-xl mb-3">
                   AI Assistant
                 </h3>
@@ -672,12 +670,16 @@ function App() {
           </div>
 
           <div className="mt-16">
-            <a
-              href="#app-section"
+            <button
+              onClick={() =>
+                document
+                  .getElementById("app-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-medium py-4 px-8 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-indigo-600/20"
             >
               Get Started
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -733,7 +735,7 @@ function App() {
                 {/* Image with fixed height - 60% width */}
                 {image && (
                   <div className="md:w-3/5">
-                    <div className="h-80 md:h-96 overflow-hidden rounded-lg">
+                    <div className="max-h-[80vh] overflow-auto rounded-lg">
                       <img
                         src={image}
                         alt="Captured"
