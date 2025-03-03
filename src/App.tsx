@@ -14,6 +14,7 @@ import {
 import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
+import { AnimatePresence, motion } from "framer-motion";
 
 // const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
@@ -221,13 +222,13 @@ const activitySuggestions = {
 
 // Emotion-based background colors (subtle tints)
 const emotionBackgrounds = {
-  happy: "bg-yellow-900/20 border-yellow-600/30",
-  sad: "bg-blue-900/20 border-blue-600/30",
-  angry: "bg-red-900/20 border-red-600/30",
-  surprised: "bg-purple-900/20 border-purple-600/30",
+  happy: "bg-indigo-900/5 border-lime-600/30",
+  sad: "bg-blue-900/10 border-blue-600/30",
+  angry: "bg-red-900/10 border-red-600/30",
+  surprised: "bg-purple-900/10 border-purple-600/30",
   neutral: "bg-gray-800 border-gray-700",
-  fear: "bg-indigo-900/20 border-indigo-600/30",
-  disgust: "bg-green-900/20 border-green-600/30",
+  fear: "bg-indigo-900/10 border-indigo-600/30",
+  disgust: "bg-green-900/10 border-green-600/30",
 };
 
 // Chat prompt suggestions
@@ -286,7 +287,7 @@ function App() {
   const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
   const [activityQueue, setActivityQueue] = useState<Activity[]>([]);
   const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
-  const [showChatbot, setShowChatbot] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(true);
   const [chatMessages, setChatMessages] = useState<
     Array<{ text: string; sender: string }>
   >([]);
@@ -612,9 +613,9 @@ function App() {
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -inset-[10px] opacity-30">
             {/* Animated background elements */}
-            <div className="absolute top-1/4 left-1/4 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div className="absolute top-1/3 right-1/4 w-36 sm:w-56 md:w-72 h-36 sm:h-56 md:h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute bottom-1/4 right-1/3 w-40 sm:w-60 md:w-80 h-40 sm:h-60 md:h-80 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+            <div className="absolute top-1/4 left-1/4 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-36 sm:w-56 md:w-72 h-36 sm:h-56 md:h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+            <div className="absolute top-1/4 right-0 w-40 sm:w-60 md:w-80 h-40 sm:h-60 md:h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
           </div>
         </div>
 
@@ -635,7 +636,7 @@ function App() {
               them with the perfect emoji, and suggest mood-boosting activities!
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-6 sm:mt-8 md:mt-12 w-full">
-              <div className="bg-gray-800/80 p-3 sm:p-4 md:p-6 rounded-xl">
+              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
                 <h3 className="font-semibold text-indigo-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                   Real-time Detection
                 </h3>
@@ -643,7 +644,7 @@ function App() {
                   Instant emotion analysis through your webcam
                 </p>
               </div>
-              <div className="bg-gray-800/80 p-3 sm:p-4 md:p-6 rounded-xl">
+              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
                 <h3 className="font-semibold text-purple-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                   Photo Upload
                 </h3>
@@ -651,7 +652,7 @@ function App() {
                   Upload and analyze photos with ease
                 </p>
               </div>
-              <div className="bg-gray-800/80 p-3 sm:p-4 md:p-6 rounded-xl">
+              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
                 <h3 className="font-semibold text-pink-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                   Mood Activities
                 </h3>
@@ -659,7 +660,7 @@ function App() {
                   Get personalized activity suggestions based on your mood
                 </p>
               </div>
-              <div className="bg-gray-800/80 p-3 sm:p-4 md:p-6 rounded-xl">
+              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
                 <h3 className="font-semibold text-green-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
                   AI Assistant
                 </h3>
@@ -687,9 +688,9 @@ function App() {
 
       <div
         id="app-section"
-        className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-8 sm:py-12 md:py-16"
+        className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-8 sm:py-12 md:py-12"
       >
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
+        <div className="flex  flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
           <button
             onClick={() => setMode("webcam")}
             className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
@@ -717,7 +718,7 @@ function App() {
         {/* Main content area with responsive design */}
         <div className="max-w-full mx-auto">
           {/* Webcam/Upload Section - Full width */}
-          <div className="bg-gray-800 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg mb-6 sm:mb-8 md:mb-12">
+          <div className="bg-gray-800/50 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg mb-6 sm:mb-8 md:mb-12">
             <div className="flex flex-col md:flex-row gap-4 sm:gap-6 md:gap-8">
               <div className="w-full">
                 {mode === "webcam" ? (
@@ -731,7 +732,7 @@ function App() {
 
           {/* Results Section */}
           {(image || error) && (
-            <div className="bg-gray-800 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg mb-6 sm:mb-8 md:mb-12">
+            <div className="bg-gray-800/50 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg mb-6 sm:mb-8 md:mb-12">
               <div className="flex flex-col md:flex-row gap-4 sm:gap-6 md:gap-8">
                 {/* Image with responsive height */}
                 {image && (
@@ -830,11 +831,11 @@ function App() {
                     Suggested Activities for Your Mood
                   </h2>
                   <p className="text-sm sm:text-base md:text-lg text-gray-400">
-                    Select one or more activities to start
+                    Select one or more activities
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-6 sm:mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:gap-8 mb-6 sm:mb-8">
                   {displayedActivities.map((activity, index) => {
                     // Get emotion-based background for non-selected items
                     const emotionCategory = mapEmotionToCategory(emotion);
@@ -853,7 +854,7 @@ function App() {
                         className={`rounded-lg p-3 sm:p-4 md:p-6 cursor-pointer transition duration-300 border ${bgClass}`}
                         onClick={() => toggleActivitySelection(index)}
                       >
-                        <div className="flex justify-between items-start mb-2 sm:mb-3 md:mb-4">
+                        <div className="flex justify-between items-start mb-2 sm:mb-3 md:mb-">
                           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-indigo-300">
                             {activity.title}
                           </h3>
@@ -967,7 +968,14 @@ function App() {
                 </button>
               </div>
 
-              {showChatbot && (
+              {/* Smooth Transition for Open/Close */}
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  showChatbot
+                    ? "max-h-[600px] opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
                 <div className="border border-gray-700 rounded-lg">
                   <div className="h-64 sm:h-80 md:h-max overflow-y-auto p-3 sm:p-4 md:p-6 bg-gray-900 custom-scrollbar">
                     {chatMessages.length === 0 ? (
@@ -1037,6 +1045,7 @@ function App() {
                       </>
                     )}
                   </div>
+
                   <form
                     onSubmit={handleChatSubmit}
                     className="flex border-t border-gray-700"
@@ -1056,7 +1065,7 @@ function App() {
                     </button>
                   </form>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}

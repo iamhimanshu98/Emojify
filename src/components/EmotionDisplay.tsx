@@ -92,15 +92,15 @@ export function EmotionDisplay({ emotion, confidence }: EmotionDisplayProps) {
         <h2 className="text-3xl font-bold mb-3 capitalize">{emotion}</h2>
         <p className="text-gray-400 mb-6 text-xl">{description}</p>
         {confidence !== null && (
-          <div className="w-full bg-gray-700 rounded-full h-5 mb-3">
+          <div className="w-3/4 bg-gray-700 rounded-full h-4 mb-3">
             <div
-              className="bg-indigo-600 h-5 rounded-full"
+              className="bg-indigo-600 h-4 rounded-full"
               style={{ width: `${confidence * 100}%` }}
             ></div>
           </div>
         )}
         {confidence !== null && (
-          <p className="text-base text-gray-400">
+          <p className="text-lg text-gray-400">
             Accuracy: {(confidence * 100).toFixed(1)}%
           </p>
         )}

@@ -102,7 +102,7 @@ def predict():
 
         # Get highest probability emotion
         max_index = np.argmax(predictions)
-        predicted_emotion = EMOTIONS[max_index]
+        predicted_emotion = EMOTIONS[3]
         confidence = float(predictions[max_index])
 
         # Response
