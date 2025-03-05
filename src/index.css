@@ -75,3 +75,10 @@ body {
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+.chat-response {
+  white-space: pre-wrap; /* Preserves new lines */
+  line-height: 1.6; /* Increases readability */
+  font-size: 16px;
+  padding: 10px;
+}

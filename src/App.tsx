@@ -14,7 +14,8 @@ import {
 import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
-import { AnimatePresence, motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 // const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
@@ -527,57 +528,41 @@ function App() {
   };
 
   // Handle chatbot interaction
-  const handleChatSubmit = (e: React.FormEvent) => {
+  const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
 
-    // Add user message
+    // Add user message to chat
     const newUserMessage = { text: userInput, sender: "user" };
     setChatMessages((prev) => [...prev, newUserMessage]);
 
-    // Generate AI response based on emotion
-    setTimeout(() => {
-      let response = "";
-      const emotionCategory = mapEmotionToCategory(emotion);
+    try {
+      const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
 
-      switch (emotionCategory) {
-        case "happy":
-          response =
-            "Since you're feeling happy, you might also enjoy calling a friend to share your good mood, starting a creative project, or planning something fun for the weekend!";
-          break;
-        case "sad":
-          response =
-            "I understand you're feeling down. Sometimes gentle self-care like a warm drink, a comfort show, or wrapping yourself in a cozy blanket can help. Would you like more suggestions?";
-          break;
-        case "angry":
-          response =
-            "When feeling angry, it can help to try physical activities to release tension, like a brisk walk or some push-ups. Would you like me to suggest some calming techniques?";
-          break;
-        case "surprised":
-          response =
-            "Surprise can be energizing! You might channel that energy into trying something new or spontaneous today. Would you like some ideas for quick adventures?";
-          break;
-        case "fear":
-          response =
-            "When feeling fearful, grounding exercises can help bring you back to the present moment. Would you like me to suggest some techniques?";
-          break;
-        case "disgust":
-          response =
-            "For feelings of disgust, creating a clean, fresh environment can help reset your senses. Would you like more ideas for sensory reset activities?";
-          break;
-        case "neutral":
-          response =
-            "A neutral mood is a great time for reflection or planning. You might try journaling about your goals or organizing something that's been on your mind. What interests you?";
-          break;
-        default:
-          response =
-            "I'd be happy to suggest more activities based on how you're feeling. What kinds of activities do you usually enjoy?";
+      if (!response.ok) {
+        throw new Error("Failed to fetch AI response");
       }
 
-      setChatMessages((prev) => [...prev, { text: response, sender: "ai" }]);
-    }, 1000);
+      const data = await response.json();
+      const aiResponse = data.response || "Sorry, I couldn't process that.";
 
-    setUserInput("");
+      // Add AI response to chat
+      setChatMessages((prev) => [...prev, { text: aiResponse, sender: "ai" }]);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      setChatMessages((prev) => [
+        ...prev,
+        { text: "Error communicating with AI.", sender: "ai" },
+      ]);
+    }
+
+    setUserInput(""); // Clear input after sending
   };
 
   // Handle clicking on a chat prompt suggestion
@@ -977,7 +962,7 @@ function App() {
                 }`}
               >
                 <div className="border border-gray-700 rounded-lg">
-                  <div className="h-64 sm:h-80 md:h-max overflow-y-auto p-3 sm:p-4 md:p-6 bg-gray-900 custom-scrollbar">
+                  <div className="h-64 sm:h-80 md:h-96 overflow-y-auto p-3 sm:p-4 md:p-6 bg-gray-900 custom-scrollbar">
                     {chatMessages.length === 0 ? (
                       <div className="text-center text-gray-500 mt-4 sm:mt-6 md:mt-8 mb-5 sm:mb-8 md:mb-10">
                         <MessageSquare className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
@@ -1021,7 +1006,9 @@ function App() {
                                     : "bg-gray-700 text-gray-200 rounded-bl-none"
                                 }`}
                               >
-                                {msg.text}
+                                <div className="chat-message">
+                                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                </div>
                               </div>
                             </div>
                           ))}
