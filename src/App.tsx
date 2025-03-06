@@ -65,7 +65,7 @@ function App() {
 
   return (
     <div>
-      <ImageCapture onCapture={handleImage} />
+      {/* <ImageCapture onCapture={handleImage} /> */}
       <EmotionDisplay emotion={emotion} confidence={confidence} />
       <Activities emotion={emotion} onActivityStart={handleActivityStart} />
       <ActivityProgress

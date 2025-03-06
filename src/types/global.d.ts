@@ -8,3 +8,11 @@ interface Activity {
   description: string;
   time: number;
 }
+
+interface WebcamCaptureProps {
+  onCapture: (imageData: string) => void;
+}
+
+interface FileUploadProps {
+  onUpload: (imageData: string) => void;
+}
