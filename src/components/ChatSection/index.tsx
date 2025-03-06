@@ -5,12 +5,13 @@ import { ChatMessage } from './ChatMessage';
 import { ChatPrompts } from './ChatPrompts';
 import { MoodFacts } from './MoodFacts';
 
+// Define the prop types
 interface ChatSectionProps {
   emotion: string | null;
   onSendMessage: (message: string) => void;
-  chatMessages: Array<{ text: string; sender: string }>;
+  chatMessages: { text: string; sender: string }[];
   showChatbot: boolean;
-  setShowChatbot: (show: boolean) => void;
+  setShowChatbot: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function ChatSection({

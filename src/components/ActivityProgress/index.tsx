@@ -1,8 +1,15 @@
-import { Clock } from 'lucide-react';
-import { Activity } from '../../constants';
+import { Clock } from "lucide-react";
 
+// Define the Activity type
+interface Activity {
+  title: string;
+  description: string;
+  time: number;
+}
+
+// Define the props type for the component
 interface ActivityProgressProps {
-  currentActivity: Activity;
+  currentActivity: Activity | null;
   activityQueue: Activity[];
   timeRemaining: number;
   onSkip: () => void;
@@ -14,19 +21,30 @@ export function ActivityProgress({
   timeRemaining,
   onSkip,
 }: ActivityProgressProps) {
+  // Function to format time as MM:SS
   const formatTimeRemaining = () => {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds
+    return `${minutes.toString().padStart(2, "0")}:${seconds
       .toString()
-      .padStart(2, '0')}`;
+      .padStart(2, "0")}`;
   };
+
+  // Handle case where no activity is in progress
+  if (!currentActivity) {
+    return (
+      <div className="bg-gray-800 rounded-lg p-6 text-gray-400 text-center">
+        No activity in progress
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gradient-to-r from-green-900/40 to-emerald-900/40 border-l-4 border-green-500 rounded-lg shadow-lg p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 md:mb-12">
       <h2 className="text-xl sm:text-2xl font-semibold text-green-400 mb-2 sm:mb-3">
         Activity in Progress
       </h2>
+
       <p className="text-lg sm:text-xl font-medium mb-2 sm:mb-3 text-white">
         {currentActivity.title}
       </p>
@@ -45,7 +63,7 @@ export function ActivityProgress({
                 key={idx}
                 className="bg-gray-800 px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm"
               >
-                {activity.title} ({activity.time}min)
+                {activity.title} ({activity.time ?? 0} min)
               </div>
             ))}
           </div>
@@ -53,12 +71,15 @@ export function ActivityProgress({
       )}
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Timer Display */}
         <div className="flex items-center">
           <Clock className="text-green-400 mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           <span className="text-xl sm:text-2xl md:text-3xl font-mono font-bold text-green-400">
             {formatTimeRemaining()}
           </span>
         </div>
+
+        {/* Skip Activity Button */}
         <button
           onClick={onSkip}
           className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded transition duration-300 w-full sm:w-auto"
