@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { HinglishConverter } from "./utils/HinglishConverter"; // Utility function
 import {
   Camera,
   Upload,
@@ -10,12 +11,15 @@ import {
   Music,
   Lightbulb,
   Dices,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import { WebcamCapture } from "./components/WebcamCapture";
 import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
+import { Chatbot } from "./components/Chatbot";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import ActivitySelector from "./components/ActivitySelector";
 
 // const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
@@ -591,6 +595,33 @@ function App() {
     }
   };
 
+  const [isListening, setIsListening] = useState(false);
+
+  const containsHindi = (text: string) => {
+    const hindiRegex = /[\u0900-\u097F]/; // Unicode range for Devanagari script
+    return hindiRegex.test(text);
+  };
+
+  const startListening = () => {
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.lang = "en-US"; // Detect both English & Hindi
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.onresult = (event: any) => {
+      let spokenText = event.results[0][0].transcript;
+
+      // If text contains Hindi characters, convert to Hinglish
+      if (containsHindi(spokenText)) {
+        spokenText = HinglishConverter(spokenText);
+      }
+
+      setUserInput(spokenText);
+    };
+
+    recognition.start();
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section - Full Height */}
@@ -759,6 +790,11 @@ function App() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-5 sm:mb-8 md:mb-10 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">
               Mood-Based Activities
             </h2>
+
+            {/* Activity Selector Component */}
+            {showActivities && emotion && (
+              <ActivitySelector emotion={emotion} />
+            )}
 
             {/* Activity in Progress */}
             {activityInProgress && currentActivity && (
@@ -936,124 +972,15 @@ function App() {
             )}
 
             {/* AI Chatbot Section */}
-            <div
-              ref={chatSectionRef}
-              className="bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 md:p-8"
-            >
-              <div
-                className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6 cursor-pointer"
-                onClick={handleOpenChat}
-              >
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
-                  Need more suggestions?
-                </h2>
-                <button className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded transition duration-300 text-sm sm:text-base w-full sm:w-auto justify-center sm:justify-start">
-                  <MessageSquare className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  {showChatbot ? "Hide Chat" : "Open Chat"}
-                </button>
-              </div>
-
-              {/* Smooth Transition for Open/Close */}
-              <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  showChatbot
-                    ? "max-h-[600px] opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
-              >
-                <div className="border border-gray-700 rounded-lg">
-                  <div className="h-64 sm:h-80 md:h-96 overflow-y-auto p-3 sm:p-4 md:p-6 bg-gray-900 custom-scrollbar">
-                    {chatMessages.length === 0 ? (
-                      <div className="text-center text-gray-500 mt-4 sm:mt-6 md:mt-8 mb-5 sm:mb-8 md:mb-10">
-                        <MessageSquare className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
-                        <p className="mb-4 sm:mb-6 md:mb-8 text-sm sm:text-base md:text-lg">
-                          Ask for personalized activity suggestions based on
-                          your mood!
-                        </p>
-
-                        {/* Prompt suggestions */}
-                        <div className="flex flex-col gap-2 sm:gap-3">
-                          {chatPrompts.map((prompt, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => handlePromptClick(prompt.text)}
-                              className="flex items-center gap-2 sm:gap-3 bg-gray-800 hover:bg-gray-700 text-left text-gray-300 p-3 sm:p-4 rounded-lg transition-colors text-xs sm:text-sm md:text-base"
-                            >
-                              <span className="text-indigo-400">
-                                {prompt.icon}
-                              </span>
-                              {prompt.text}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="space-y-3 sm:space-y-4 md:space-y-5 mb-4 sm:mb-5 md:mb-6">
-                          {chatMessages.map((msg, index) => (
-                            <div
-                              key={index}
-                              className={`flex ${
-                                msg.sender === "user"
-                                  ? "justify-end"
-                                  : "justify-start"
-                              }`}
-                            >
-                              <div
-                                className={`max-w-[80%] px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base ${
-                                  msg.sender === "user"
-                                    ? "bg-indigo-600 text-white rounded-br-none"
-                                    : "bg-gray-700 text-gray-200 rounded-bl-none"
-                                }`}
-                              >
-                                <div className="chat-message">
-                                  <ReactMarkdown>{msg.text}</ReactMarkdown>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Prompt suggestions after messages */}
-                        <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-4 md:mt-6">
-                          {chatPrompts.map((prompt, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => handlePromptClick(prompt.text)}
-                              className="flex items-center gap-1 sm:gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm transition-colors"
-                            >
-                              <span className="text-indigo-400">
-                                {prompt.icon}
-                              </span>
-                              {prompt.text}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <form
-                    onSubmit={handleChatSubmit}
-                    className="flex border-t border-gray-700"
-                  >
-                    <input
-                      type="text"
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      placeholder="Ask for more activity suggestions..."
-                      className="flex-grow p-2 sm:p-3 md:p-4 bg-gray-800 text-white focus:outline-none text-sm sm:text-base md:text-lg"
-                    />
-                    <button
-                      type="submit"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 md:px-6 text-sm sm:text-base"
-                    >
-                      Send
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
+            <Chatbot
+              chatMessages={chatMessages}
+              setChatMessages={setChatMessages}
+              userInput={userInput}
+              setUserInput={setUserInput}
+              showChatbot={showChatbot}
+              setShowChatbot={setShowChatbot}
+              chatPrompts={chatPrompts}
+            />
           </div>
         )}
 
