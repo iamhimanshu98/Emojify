@@ -126,22 +126,22 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
       .padStart(2, "0")}`;
   };
 
-  const mapEmotionToCategory = (emotion: string | null): string => {
-    if (!emotion) return "neutral";
+  // const mapEmotionToCategory = (emotion: string | null): string => {
+  //   if (!emotion) return "neutral";
 
-    const emotionMap: { [key: string]: string } = {
-      happy: "happy",
-      sad: "sad",
-      angry: "angry",
-      fear: "fear",
-      surprise: "surprised",
-      disgust: "disgust",
-      neutral: "neutral",
-    };
+  //   const emotionMap: { [key: string]: string } = {
+  //     happy: "happy",
+  //     sad: "sad",
+  //     angry: "angry",
+  //     fear: "fear",
+  //     surprise: "surprised",
+  //     disgust: "disgust",
+  //     neutral: "neutral",
+  //   };
 
-    // return "neutral";
-    return emotionMap[emotion.toLowerCase()] || "neutral";
-  };
+  //   // return "neutral";
+  //   return emotionMap[emotion.toLowerCase()] || "neutral";
+  // };
 
   const emotionBackgrounds = {
     happy: "bg-indigo-900/5 border-lime-600/30",

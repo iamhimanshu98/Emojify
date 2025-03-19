@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Camera,
   Upload,
@@ -17,7 +17,6 @@ import ActivitySelector from "./components/ActivitySelector";
 // const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
 
-// Chat prompt suggestions
 const chatPrompts = [
   {
     text: "Tell me interesting facts about my current mood",
@@ -33,7 +32,6 @@ const chatPrompts = [
   },
 ];
 
-// Activity type with selection and time properties
 interface Activity {
   title: string;
   description: string;
@@ -64,8 +62,6 @@ function App() {
   const [activityInProgress, setActivityInProgress] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showActivities, setShowActivities] = useState(false);
-  // Refs for scrolling
-  const chatSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadDefaultImage = async () => {
