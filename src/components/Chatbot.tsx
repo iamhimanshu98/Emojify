@@ -262,9 +262,9 @@ export const Chatbot = ({
                   title={isListening ? "Stop listening" : "Start voice input"}
                 >
                   {isListening ? (
-                    <MicOff className="text-red-500 w-5 h-5" />
+                    <MicOff className="text-white-500 w-6 h-5" />
                   ) : (
-                    <Mic className="text-green-400 w-5 h-5" />
+                    <Mic className="text-white-400 w-6 h-5" />
                   )}
                 </button>
                 <button
@@ -273,7 +273,7 @@ export const Chatbot = ({
                   className={cn(
                     "bg-indigo-600 text-white px-3 sm:px-4 md:px-6 text-sm sm:text-base rounded-br-lg transition",
                     !isLoading && userInput.trim() && "hover:bg-indigo-700",
-                    (!userInput.trim() || isLoading) && "opacity-50 cursor-not-allowed"
+                    (!userInput.trim() || isLoading) && "opacity-100"
                   )}
                 >
                   Send
