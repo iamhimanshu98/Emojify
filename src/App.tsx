@@ -46,8 +46,6 @@ function App() {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Activity suggestion states
   const [displayedActivities, setDisplayedActivities] = useState<Activity[]>(
     []
   );
