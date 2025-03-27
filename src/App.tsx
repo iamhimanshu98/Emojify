@@ -6,6 +6,7 @@ import {
   Smile,
   Clock,
   Music,
+  Brain,
   Lightbulb,
 } from "lucide-react";
 import { WebcamCapture } from "./components/WebcamCapture";
@@ -13,6 +14,7 @@ import { FileUpload } from "./components/FileUpload";
 import { EmotionDisplay } from "./components/EmotionDisplay";
 import { Chatbot } from "./components/Chatbot";
 import ActivitySelector from "./components/ActivitySelector";
+import type { ModelType } from "./utils/types";
 
 // const API_URL = "https://emojify-3amt.onrender.com";
 const DEFAULT_IMAGE = "/images/boy.jpg";
@@ -49,6 +51,7 @@ function App() {
   const [displayedActivities, setDisplayedActivities] = useState<Activity[]>(
     []
   );
+  const [modelType, setModelType] = useState<ModelType>("tensorflow");
   const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
   const [activityQueue, setActivityQueue] = useState<Activity[]>([]);
   const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
@@ -120,7 +123,10 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ image: imageData }),
+        body: JSON.stringify({
+          image: imageData,
+          model: modelType || "tensorflow",
+        }),
       });
 
       if (!response.ok) {
@@ -301,6 +307,32 @@ function App() {
             <Upload size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
             Upload Photo
           </button>
+
+          <div className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg">
+            <Brain className="w-6 h-6 text-purple-500" />
+            <div className="flex gap-3">
+              <button
+                onClick={() => setModelType("tensorflow")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  modelType === "tensorflow"
+                    ? "bg-purple-600 text-white"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+              >
+                TensorFlow
+              </button>
+              <button
+                onClick={() => setModelType("deepface")}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  modelType === "deepface"
+                    ? "bg-purple-600 text-white"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+              >
+                DeepFace
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Main content area with responsive design */}
@@ -348,7 +380,11 @@ function App() {
                       </span>
                     </div>
                   ) : (
-                    <EmotionDisplay emotion={emotion} confidence={confidence} />
+                    <EmotionDisplay
+                      emotion={emotion}
+                      confidence={confidence}
+                      modelType={modelType}
+                    />
                   )}
                 </div>
               </div>
