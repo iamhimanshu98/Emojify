@@ -17,6 +17,7 @@ import ActivitySelector from "./components/ActivitySelector";
 import type { ModelType } from "./utils/types";
 
 // const API_URL = "https://emojify-3amt.onrender.com";
+
 const DEFAULT_IMAGE = "/images/boy.jpg";
 
 const chatPrompts = [
