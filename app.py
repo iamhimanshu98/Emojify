@@ -16,7 +16,6 @@ load_dotenv()
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# Ensure API key exists
 if not API_KEY:
     raise ValueError("Missing API key. Please set OPENROUTER_API_KEY in .env file.")
 
@@ -24,7 +23,6 @@ if not API_KEY:
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
 
-# Load Emotion Detection Model
 model_path = "models/model.h5"
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file not found at {model_path}")
@@ -32,7 +30,6 @@ if not os.path.exists(model_path):
 model = load_model(model_path, compile=False)
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
-# Define emotions
 EMOTIONS = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
 
 # Load Haar Cascade for face detection
@@ -122,7 +119,7 @@ def predict_with_deepface(image):
         
         return {
             "emotion": dominant_emotion,
-            "confidence": None,  # DeepFace doesn't provide a single confidence score
+            "confidence": None,  
             "all_predictions": emotions
         }
     except Exception as e:
