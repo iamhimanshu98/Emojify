@@ -49,9 +49,6 @@ function App() {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [displayedActivities, setDisplayedActivities] = useState<Activity[]>(
-    []
-  );
   const [modelType, setModelType] = useState<ModelType>("tensorflow");
   const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
   const [activityQueue, setActivityQueue] = useState<Activity[]>([]);
