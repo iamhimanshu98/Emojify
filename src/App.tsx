@@ -247,7 +247,7 @@ function App() {
                   .getElementById("app-section")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className=" bg-indigo-600 hover:bg-indigo-700 text-gray-100 text-base sm:text-lg md:text-xl font-medium py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 rounded-full transition-all duration-300 shadow-xl focus:outline-none focus:ring focus:ring-indigo-500 focus:ring-offset-0 animate-bounce-slow"
+              className=" bg-indigo-600 hover:bg-indigo-700 text-gray-100 text-base sm:text-lg md:text-xl font-medium py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 rounded-full transition-all duration-300 shadow-xl animate-bounce-slow"
             >
               🚀 Get Started
             </button>
@@ -259,54 +259,62 @@ function App() {
         id="app-section"
         className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-8 sm:py-12 md:py-12"
       >
-        <div className="flex  flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
-          <button
-            onClick={() => setMode("webcam")}
-            className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
-              mode === "webcam"
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            <Camera size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-            Webcam
-          </button>
-          <button
-            onClick={() => setMode("upload")}
-            className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
-              mode === "upload"
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            <Upload size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-            Upload Photo
-          </button>
+        <div className="flex justify-around items-center gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-12">
+          {/* Mode Selection */}
+          <div className="flex gap-3 sm:gap-4 md:gap-6">
+            <button
+              onClick={() => setMode("webcam")}
+              className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
+                mode === "webcam"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              <Camera
+                size={20}
+                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
+              />
+              Webcam
+            </button>
+            <button
+              onClick={() => setMode("upload")}
+              className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
+                mode === "upload"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              <Upload
+                size={20}
+                className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
+              />
+              Upload Photo
+            </button>
+          </div>
 
-          <div className="flex items-center gap-4 bg-gray-800 p-4 rounded-lg">
-            <Brain className="w-6 h-6 text-purple-500" />
-            <div className="flex gap-3">
-              <button
-                onClick={() => setModelType("tensorflow")}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  modelType === "tensorflow"
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                TensorFlow
-              </button>
-              <button
-                onClick={() => setModelType("deepface")}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  modelType === "deepface"
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                DeepFace
-              </button>
-            </div>
+          {/* Model Selection - Shifted to Right */}
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+            <Brain className="w-8 h-8 text-purple-500" />
+            <button
+              onClick={() => setModelType("tensorflow")}
+              className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
+                modelType === "tensorflow"
+                  ? "bg-purple-600/90 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              TensorFlow
+            </button>
+            <button
+              onClick={() => setModelType("deepface")}
+              className={`flex items-center gap-2 md:gap-3 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg text-sm sm:text-base md:text-lg transition-colors ${
+                modelType === "deepface"
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              DeepFace
+            </button>
           </div>
         </div>
 
