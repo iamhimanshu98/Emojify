@@ -52,15 +52,15 @@ function App() {
 
   const chatPrompts = [
     {
-      text: `Tell me interesting facts about ${formatEmotion(emotion)} mood`,
+      text: `Some Facts about ${formatEmotion(emotion)} mood!`,
       icon: <Lightbulb size={16} />,
     },
     {
-      text: `Suggest music that matches ${formatEmotion(emotion)} feeling`,
+      text: `Music that matches ${formatEmotion(emotion)} feeling`,
       icon: <Music size={16} />,
     },
     {
-      text: `What activities would help improve my mood?`,
+      text: `Activities to improve my mood?`,
       icon: <Clock size={16} />,
     },
   ];
