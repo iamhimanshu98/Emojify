@@ -31,6 +31,15 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "Call a Friend",
         description: "Share your good mood with someone you care about.",
       },
+      {
+        title: "Photo Album Time",
+        description: "Look through old happy photos or create a new digital album.",
+      },
+      {
+        title: "Compliment Chain",
+        description: "Compliment three people today and watch the positivity spread.",
+      },
+      
     ],
     sad: [
       {
@@ -58,6 +67,27 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "Warm Bath",
         description: "Take a relaxing bath with essential oils or bath salts.",
       },
+      {
+        title: "Tear It Out",
+        description: "Let yourself cry. Tears are a natural way for the body to release sadness.",
+      },
+      {
+        title: "Memory Lane Walk",
+        description: "Take a walk to a place that holds a good memory and reflect gently.",
+      },
+      {
+        title: "Self-Compassion Meditation",
+        description: "Try a guided meditation focused on kindness toward yourself.",
+      },
+      {
+        title: "Create a Comfort Box",
+        description: "Fill a box with things that make you feel safe and supported — photos, scents, notes, or textures.",
+      },
+      {
+        title: "Watch the Sky",
+        description: "Sit somewhere quiet and just watch the clouds or stars — let your mind rest.",
+      },
+      
     ],
     angry: [
       {
@@ -87,6 +117,15 @@ const activitySuggestions: Record<string, Activity[]> = {
         description:
           "Tense and release each muscle group to release physical tension.",
       },
+      {
+        title: "Scream Therapy (Safely)",
+        description: "Let out a scream into a pillow or secluded place to release anger.",
+      },
+      {
+        title: "Cold Splash",
+        description: "Splash cold water on your face to reset your body and mind.",
+      },
+      
     ],
     surprised: [
       {
@@ -115,6 +154,15 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "New Recipe",
         description: "Try cooking something you've never made before.",
       },
+      {
+        title: "Voice Memo Journaling",
+        description: "Record your initial thoughts to process the moment.",
+      },
+      {
+        title: "Surprise Someone Else",
+        description: "Turn the energy around and plan a small surprise for a friend.",
+      },
+      
     ],
     neutral: [
       {
@@ -143,8 +191,17 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "People Watching",
         description: "Sit in a public place and observe the world around you.",
       },
+      {
+        title: "Digital Detox",
+        description: "Take a short break from screens to reset your mind.",
+      },
+      {
+        title: "Tea Time",
+        description: "Make a cup of tea and enjoy it with no distractions.",
+      },
+      
     ],
-    // Map other emotions to appropriate activities
+
     fear: [
       {
         title: "Grounding Exercise",
@@ -172,6 +229,15 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "Positive Affirmations",
         description: "Repeat calming affirmations that help you feel safe.",
       },
+      {
+        title: "Slow Rocking",
+        description: "Sit and gently rock yourself to soothe your nervous system.",
+      },
+      {
+        title: "Create a Safety Plan",
+        description: "Write down steps that help you feel more in control.",
+      },
+      
     ],
     disgust: [
       {
@@ -192,6 +258,14 @@ const activitySuggestions: Record<string, Activity[]> = {
         title: "Hand Washing Ritual",
         description: "Practice mindful hand washing as a cleansing ritual.",
       },
+      {
+        title: "Fresh Outfit",
+        description: "Change into clean, comfortable clothes to refresh your body.",
+      },
+      {
+        title: "Mental Cleanse",
+        description: "Write down negative thoughts and rip up the paper to release them.",
+      },      
       {
         title: "Sensory Reset",
         description:

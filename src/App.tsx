@@ -20,21 +20,6 @@ import type { ModelType } from "./utils/types";
 
 const DEFAULT_IMAGE = "/images/boy.jpg";
 
-const chatPrompts = [
-  {
-    text: "Tell me interesting facts about my current mood",
-    icon: <Lightbulb size={16} />,
-  },
-  {
-    text: "Suggest music that matches how I'm feeling",
-    icon: <Music size={16} />,
-  },
-  {
-    text: "What activities would help improve my mood?",
-    icon: <Clock size={16} />,
-  },
-];
-
 interface Activity {
   title: string;
   description: string;
@@ -61,6 +46,24 @@ function App() {
   const [activityInProgress, setActivityInProgress] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showActivities, setShowActivities] = useState(false);
+
+  const formatEmotion = (emotion: string | null) =>
+    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : ""; 
+
+  const chatPrompts = [
+    {
+      text: `Tell me interesting facts about ${formatEmotion(emotion)} mood`,
+      icon: <Lightbulb size={16} />,
+    },
+    {
+      text: `Suggest music that matches ${formatEmotion(emotion)} feeling`,
+      icon: <Music size={16} />,
+    },
+    {
+      text: `What activities would help improve my mood?`,
+      icon: <Clock size={16} />,
+    },
+  ];
 
   useEffect(() => {
     const loadDefaultImage = async () => {

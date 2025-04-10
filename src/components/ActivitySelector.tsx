@@ -126,6 +126,10 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
       .padStart(2, "0")}`;
   };
 
+  const formatEmotion = (emotion: string | null) =>
+    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : ""; 
+
+
   // const mapEmotionToCategory = (emotion: string | null): string => {
   //   if (!emotion) return "neutral";
 
@@ -206,7 +210,7 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
         <div className="rounded-lg shadow-lg p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 md:mb-12 border border-gray-700 bg-gray-800/50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-4 sm:mb-6 md:mb-8">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
-              Suggested Activities for Your Mood
+              Suggested Activities for {formatEmotion(emotion)} Mood
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-400">
               Select one or more activities

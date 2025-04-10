@@ -20,5 +20,5 @@ export const detectEmotion = async (image: File, modelType: "tensorflow" | "deep
     });
 
     const data = await response.json();
-    return data; // Return emotion data
+    return data;
 };

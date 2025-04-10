@@ -157,7 +157,7 @@ export const Chatbot = ({
                   >
                     <MessageSquare className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
                     <p className="mb-4 sm:mb-6 md:mb-8 text-sm sm:text-base md:text-lg">
-                      Ask for personalized activity suggestions based on your mood!
+                      Ask Anything!
                     </p>
                     <div className="flex flex-col gap-2 sm:gap-3">
                       {chatPrompts.map((prompt, idx) => (
@@ -246,7 +246,7 @@ export const Chatbot = ({
                   type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="Ask for more activity suggestions..."
+                  placeholder="Ask for any suggestions..."
                   className="flex-grow p-2 sm:p-3 md:p-4 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-sm sm:text-base md:text-lg rounded-bl-lg"
                   disabled={isLoading}
                 />
