@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Camera,
   Upload,
@@ -48,7 +48,7 @@ function App() {
   const [showActivities, setShowActivities] = useState(false);
 
   const formatEmotion = (emotion: string | null) =>
-    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : ""; 
+    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : "";
 
   const chatPrompts = [
     {
@@ -201,69 +201,43 @@ function App() {
     }
   };
 
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      textRef.current?.classList.add("no-cursor");
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section - Full Height */}
       <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-indigo-900/30 to-gray-900 px-4 sm:px-6 md:px-8 py-10 overflow-hidden relative">
+        {/* Animated Blobs Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -inset-[10px] opacity-30">
-            {/* Animated background elements */}
-            <div className="absolute top-1/4 left-1/4 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-36 sm:w-56 md:w-72 h-36 sm:h-56 md:h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute top-1/4 right-0 w-40 sm:w-60 md:w-80 h-40 sm:h-60 md:h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+            <div className="absolute top-1/4 left-1/4 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob motion-safe:animate-[blob_7s_infinite]"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-36 sm:w-56 md:w-72 h-36 sm:h-56 md:h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob motion-safe:animate-[blob_7s_infinite] animation-delay-2000"></div>
+            <div className="absolute top-1/4 right-0 w-40 sm:w-60 md:w-80 h-40 sm:h-60 md:h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob motion-safe:animate-[blob_7s_infinite] animation-delay-4000"></div>
           </div>
         </div>
 
+        {/* Hero Content */}
         <div className="container mx-auto text-center z-10 max-w-5xl">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-5 mb-4 sm:mb-6 md:mb-8">
-            <Smile className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 text-indigo-500" />
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text pb-1 sm:pb-2">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-5 mb-4 sm:mb-6 md:mb-8 animate-fadeInUp">
+            <Smile className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 text-indigo-500 animate-pulse-slow" />
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text pb-1 sm:pb-2 animate-float">
               Emojify
             </h1>
           </div>
-          <p className="text-xl sm:text-2xl md:text-4xl text-gray-300 mb-4 sm:mb-6 md:mb-8 font-light">
-            Transform your expressions into emotions with AI
-          </p>
-          <div className="flex flex-col items-center gap-4 sm:gap-6 text-gray-300 mx-auto">
-            <p className="text-base sm:text-lg md:text-xl text-center sm:text-justify">
-              Experience AI-powered real-time emotion detection. Use your
-              webcam, and Emojify will instantly analyze your expressions, match
-              them with the perfect emoji, and suggest mood-boosting activities!
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-6 sm:mt-8 md:mt-12 w-full">
-              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
-                <h3 className="font-semibold text-indigo-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                  Real-time Detection
-                </h3>
-                <p className="text-sm sm:text-base">
-                  Instant emotion analysis through your webcam
-                </p>
-              </div>
-              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
-                <h3 className="font-semibold text-purple-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                  Photo Upload
-                </h3>
-                <p className="text-sm sm:text-base">
-                  Upload and analyze photos with ease
-                </p>
-              </div>
-              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
-                <h3 className="font-semibold text-pink-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                  Mood Activities
-                </h3>
-                <p className="text-sm sm:text-base">
-                  Get personalized activity suggestions based on your mood
-                </p>
-              </div>
-              <div className="bg-slate-800/50 p-3 sm:p-4 md:p-6 rounded-xl">
-                <h3 className="font-semibold text-green-400 text-base sm:text-lg md:text-xl mb-1 sm:mb-2 md:mb-3">
-                  AI Assistant
-                </h3>
-                <p className="text-sm sm:text-base">
-                  Chat for more personalized recommendations
-                </p>
-              </div>
-            </div>
+
+          <div
+            ref={textRef}
+            className="animate-typewriter text-xl sm:text-2xl md:text-4xl text-gray-100 font-light"
+          >
+            Transform Your Expressions Into Emotions
           </div>
 
           <div className="mt-8 sm:mt-12 md:mt-16">
@@ -273,9 +247,9 @@ function App() {
                   .getElementById("app-section")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-base sm:text-lg md:text-xl font-medium py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-indigo-600/20"
+              className=" bg-indigo-600 hover:bg-indigo-700 text-gray-100 text-base sm:text-lg md:text-xl font-medium py-2 sm:py-3 md:py-4 px-4 sm:px-6 md:px-8 rounded-full transition-all duration-300 shadow-xl focus:outline-none focus:ring focus:ring-indigo-500 focus:ring-offset-0 animate-bounce-slow"
             >
-              Get Started
+              🚀 Get Started
             </button>
           </div>
         </div>

@@ -32,84 +32,88 @@ export function EmotionDisplay({ emotion, confidence, modelType }: EmotionDispla
 
     switch (emotion.toLowerCase()) {
       case 'happy':
-        setEmoji(<Smile className="w-full h-full" />);
-        setColor('text-yellow-500');
+        setEmoji(<Smile className="w-24 h-24" />);
+        setColor('text-yellow-400');
         setDescription('You seem happy and joyful!');
         break;
       case 'sad':
-        setEmoji(<Frown className="w-full h-full" />);
-        setColor('text-blue-500');
+        setEmoji(<Frown className="w-24 h-24" />);
+        setColor('text-blue-400');
         setDescription('You appear to be feeling sad.');
         break;
       case 'angry':
-        setEmoji(<AlertTriangle className="w-full h-full" />);
-        setColor('text-red-500');
+        setEmoji(<AlertTriangle className="w-24 h-24" />);
+        setColor('text-red-400');
         setDescription('You seem angry or upset.');
         break;
       case 'surprised':
       case 'surprise':
-        setEmoji(<Zap className="w-full h-full" />);
-        setColor('text-purple-500');
+        setEmoji(<Zap className="w-24 h-24" />);
+        setColor('text-purple-400');
         setDescription('You look surprised!');
         break;
       case 'fear':
-        setEmoji(<Droplet className="w-full h-full" />);
-        setColor('text-indigo-500');
+        setEmoji(<Droplet className="w-24 h-24" />);
+        setColor('text-indigo-400');
         setDescription('You appear to be feeling fearful.');
         break;
       case 'disgust':
-        setEmoji(<AlertTriangle className="w-full h-full" />);
-        setColor('text-green-500');
+        setEmoji(<AlertTriangle className="w-24 h-24" />);
+        setColor('text-green-400');
         setDescription('You seem disgusted.');
         break;
       case 'neutral':
-        setEmoji(<Meh className="w-full h-full" />);
+        setEmoji(<Meh className="w-24 h-24" />);
         setColor('text-gray-500');
         setDescription('You appear neutral.');
         break;
       default:
-        setEmoji(<Heart className="w-full h-full" />);
-        setColor('text-pink-500');
+        setEmoji(<Heart className="w-24 h-24" />);
+        setColor('text-pink-400');
         setDescription(`Detected: ${emotion}`);
     }
   }, [emotion]);
 
   if (!emotion) {
     return (
-      <div className="flex flex-col items-center justify-center p-6 bg-gray-700 rounded-lg">
+      <div className="flex flex-col items-center justify-center bg-gray-800 p-6 rounded-xl shadow-lg space-y-4 w-full h-64 max-w-md">
         <Meh className="w-16 h-16 text-gray-500" />
-        <h3 className="mt-4 text-xl font-bold">No Emotion Detected</h3>
-        <p className="text-gray-400 text-center">
+        <h3 className="text-xl font-semibold text-white">No Emotion Detected</h3>
+        <p className="text-sm text-gray-400 text-center">
           Try uploading a clearer image or adjusting lighting.
         </p>
       </div>
     );
   }
 
-  return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center gap-2 mb-4">
-        <Brain className="w-5 h-5 text-purple-500" />
-        <span className="text-sm text-purple-400">
-          Using {modelType === 'tensorflow' ? 'TensorFlow' : 'DeepFace'} Model
-        </span>
-      </div>
-      <div className={`w-32 h-32 mb-4 ${color}`}>{emoji}</div>
-      <h2 className="text-2xl font-bold mb-2 capitalize">{emotion}</h2>
-      <p className="text-gray-400 mb-4">{description}</p>
-      {confidence !== null && (
-        <div className="w-full bg-gray-700 rounded-full h-4 mb-2">
-          <div
-            className="bg-indigo-600 h-4 rounded-full"
-            style={{ width: `${confidence * 100}%` }}
-          ></div>
-        </div>
-      )}
-      {confidence !== null && (
-        <p className="text-gray-400">
-          Accuracy: {(confidence * 100).toFixed(1)}%
-        </p>
-      )}
-    </div>
+  return (<div className="bg-gray-900 p-12 rounded-3xl shadow-2xl flex flex-col justify-center items-center space-y-8 text-white">  
+    <div className="flex items-center gap-4 text-lg text-purple-400">  
+      <Brain className="w-8 h-8" />  
+      <span>  
+        <span className="font-semibold">Using {modelType === 'tensorflow' ? 'TensorFlow' : 'DeepFace'} model</span>  
+      </span>  
+    </div>  
+  
+    <div className={`flex items-center justify-center ${color}`}>  
+      {emoji}  
+    </div>  
+  
+    <h2 className="text-3xl font-bold capitalize">{emotion}</h2>  
+    <p className="text-lg text-gray-300 text-center">{description}</p>  
+  
+    {confidence !== null && (  
+      <div className="w-full space-y-3">  
+        <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden">  
+          <div  
+            className="bg-indigo-500 h-4 transition-all duration-500"  
+            style={{ width: `${confidence * 100}%` }}  
+          ></div>  
+        </div>  
+        <p className="text-lg text-gray-400 text-center">  
+          Accuracy: {(confidence * 100).toFixed(1)}%  
+        </p>  
+      </div>  
+    )}  
+  </div>
   );
 }
