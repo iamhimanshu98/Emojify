@@ -27,14 +27,32 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
     const activities =
       activitySuggestions[emotion] || activitySuggestions.neutral;
     const shuffled = [...activities].sort(() => 0.5 - Math.random());
-    setSelectedActivities([]);
+    const selectedFirstActivity =
+      shuffled.length > 0 ? [{ ...shuffled[0], selected: true }] : [];
     setDisplayedActivities(
-      shuffled.slice(0, 3).map((activity) => ({
+      shuffled.slice(0, 4).map((activity) => ({
         ...activity,
-        selected: false,
+        selected: selectedFirstActivity.some((a) => a.title === activity.title),
         time: activity.time || 5,
       }))
     );
+    setSelectedActivities(selectedFirstActivity);
+  };
+
+  const startTimer = () => {
+    if (!currentActivity) return;
+    setTimeRemaining((currentActivity.time || 5) * 60);
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          moveToNextActivity();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -42,6 +60,32 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
       shuffleActivities();
     }
   }, [emotion]);
+
+  const moveToNextActivity = () => {
+    const updatedQueue = [...activityQueue];
+    updatedQueue.shift();
+    setActivityQueue(updatedQueue);
+
+    if (updatedQueue.length > 0) {
+      const nextActivity = updatedQueue[0];
+      setCurrentActivity(nextActivity);
+      setTimeRemaining((nextActivity.time || 5) * 60);
+
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            moveToNextActivity();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setActivityInProgress(false);
+      setCurrentActivity(null);
+    }
+  };
 
   const toggleActivitySelection = (index: number) => {
     const updatedActivities = [...displayedActivities];
@@ -92,32 +136,6 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
     }
   };
 
-  const moveToNextActivity = () => {
-    const updatedQueue = [...activityQueue];
-    updatedQueue.shift();
-    setActivityQueue(updatedQueue);
-
-    if (updatedQueue.length > 0) {
-      const nextActivity = updatedQueue[0];
-      setCurrentActivity(nextActivity);
-      setTimeRemaining((nextActivity.time || 5) * 60);
-
-      const timer = setInterval(() => {
-        setTimeRemaining((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            moveToNextActivity();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      setActivityInProgress(false);
-      setCurrentActivity(null);
-    }
-  };
-
   const formatTimeRemaining = () => {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
@@ -127,25 +145,7 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
   };
 
   const formatEmotion = (emotion: string | null) =>
-    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : ""; 
-
-
-  // const mapEmotionToCategory = (emotion: string | null): string => {
-  //   if (!emotion) return "neutral";
-
-  //   const emotionMap: { [key: string]: string } = {
-  //     happy: "happy",
-  //     sad: "sad",
-  //     angry: "angry",
-  //     fear: "fear",
-  //     surprise: "surprised",
-  //     disgust: "disgust",
-  //     neutral: "neutral",
-  //   };
-
-  //   // return "neutral";
-  //   return emotionMap[emotion.toLowerCase()] || "neutral";
-  // };
+    emotion ? `${emotion.charAt(0).toUpperCase()}${emotion.slice(1)}` : "";
 
   const emotionBackgrounds = {
     happy: "bg-indigo-900/5 border-lime-600/30",
@@ -217,7 +217,7 @@ const ActivitySelector: React.FC<Props> = ({ emotion }) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:gap-8 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-8 mb-6 sm:mb-8">
             {displayedActivities.map((activity, index) => {
               // const emotionCategory = mapEmotionToCategory(emotion);
               const bgClass = activity.selected
